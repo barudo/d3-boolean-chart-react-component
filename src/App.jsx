@@ -20,7 +20,7 @@ function App() {
         series={booleanSeries}
         startTime={exampleData.time.startTime}
         sampleIntervalS={exampleData.time.sampleIntervalS}
-        minSegmentWidth={0}
+        minSegmentWidth={20}
         settings={{ plotColor: "#ff1a12", plotLineWidth: 8 }}
         width={980}
       />
