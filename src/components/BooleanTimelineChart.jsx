@@ -6,10 +6,13 @@ function BooleanTimelineChart({
   startTime,
   sampleIntervalS = 1,
   minSegmentWidth = 20,
+  settings = {},
   width = 900,
   margin = { top: 20, right: 20, bottom: 32, left: 140 },
 }) {
   const svgRef = useRef(null);
+  const plotColor = settings.plotColor || "#ff1a12";
+  const plotLineWidth = settings.plotLineWidth || 8;
 
   useEffect(() => {
     if (!series.length || !startTime) return;
@@ -103,6 +106,17 @@ function BooleanTimelineChart({
 
       const innerBarHeight = Math.max(band.bandwidth() * 0.5, 14);
       const yRow = y + (band.bandwidth() - innerBarHeight) / 2;
+      const yCenter = y + band.bandwidth() / 2;
+
+      rowGroup
+        .append("line")
+        .attr("x1", 0)
+        .attr("x2", innerWidth)
+        .attr("y1", yCenter)
+        .attr("y2", yCenter)
+        .attr("stroke", plotColor)
+        .attr("stroke-width", plotLineWidth)
+        .attr("stroke-linecap", "butt");
 
       rowGroup
         .selectAll(`rect.run-${index}`)
@@ -118,10 +132,19 @@ function BooleanTimelineChart({
           return Math.max(endX - startX, minSegmentWidth);
         })
         .attr("height", innerBarHeight)
-        .attr("fill", "#3b82f6")
+        .attr("fill", plotColor)
         .attr("rx", 4);
     });
-  }, [series, startTime, sampleIntervalS, minSegmentWidth, width, margin]);
+  }, [
+    series,
+    startTime,
+    sampleIntervalS,
+    minSegmentWidth,
+    plotColor,
+    plotLineWidth,
+    width,
+    margin,
+  ]);
 
   return (
     <div style={{ overflowX: "auto" }}>

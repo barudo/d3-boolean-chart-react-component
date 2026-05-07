@@ -4,7 +4,7 @@
 
 This repository now includes a working React + D3 implementation of a boolean time-series chart.
 
-The chart accepts multiple boolean series via props and renders a shared time-based X axis with one row per series. Short `true` segments are padded to a minimum width to ensure visibility.
+The chart accepts multiple boolean series via props and renders a shared time-based X axis with one row per series. Short `true` segments can be padded to a minimum width when needed. Plot styling can be adjusted through the chart `settings` prop.
 
 The example app loads sample boolean data from `src/example-data.json`.
 
@@ -28,9 +28,22 @@ npm run dev
 
 Then open the local Vite URL shown in the terminal.
 
+## Settings
+
+Set the active plot color with `settings.plotColor`. The center line and thicker `true` segments use this color.
+
+```jsx
+<BooleanTimelineChart
+  series={booleanSeries}
+  startTime={exampleData.time.startTime}
+  sampleIntervalS={exampleData.time.sampleIntervalS}
+  settings={{ plotColor: "#ff1a12", plotLineWidth: 8 }}
+/>
+```
+
 ## Verification
 
-The app renders a chart with boolean rows and a shared time axis. Each `true` range uses a colored segment and a minimum width of 20px.
+The app renders a chart with boolean rows and a shared time axis. Each row has a configured-color center line with thicker `true` ranges drawn on top.
 
 ## Notes
 

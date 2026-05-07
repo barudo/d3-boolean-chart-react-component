@@ -13,14 +13,15 @@ function App() {
       <h1>D3 Boolean Timeline Chart</h1>
       <p>
         This example renders a shared time-based X axis with multiple boolean
-        series. Short <strong>true</strong> segments are guaranteed a minimum
-        width.
+        series. Each row uses a center line with thicker <strong>true</strong>
+        segments drawn on top.
       </p>
       <BooleanTimelineChart
         series={booleanSeries}
         startTime={exampleData.time.startTime}
         sampleIntervalS={exampleData.time.sampleIntervalS}
-        minSegmentWidth={20}
+        minSegmentWidth={0}
+        settings={{ plotColor: "#ff1a12", plotLineWidth: 8 }}
         width={980}
       />
       <p style={{ marginTop: 18, fontSize: 14, color: "#555" }}>
