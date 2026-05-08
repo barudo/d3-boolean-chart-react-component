@@ -4,7 +4,7 @@
 
 This repository now includes a working React + D3 implementation of a boolean time-series chart.
 
-The chart accepts multiple boolean series via props and renders a shared time-based X axis with one row per series. Short `true` segments can be padded to a minimum width when needed. Plot styling can be adjusted through the chart `settings` prop.
+The chart accepts the `labels`, `samples`, and `time` fields from the provided data format via props and renders a shared time-based X axis with one row per boolean series. Short `true` segments can be padded to a minimum width when needed. Plot styling can be adjusted through the chart `settings` prop.
 
 The example app loads sample boolean data from `src/example-data.json`.
 
@@ -34,12 +34,14 @@ Set the active plot color with `settings.plotColor`. The center line and thicker
 
 ```jsx
 <BooleanTimelineChart
-  series={booleanSeries}
-  startTime={exampleData.time.startTime}
-  sampleIntervalS={exampleData.time.sampleIntervalS}
+  labels={exampleData.labels}
+  samples={exampleData.samples}
+  time={exampleData.time}
   settings={{ plotColor: "#ff1a12", plotLineWidth: 8 }}
 />
 ```
+
+The component also accepts a pre-derived `series` prop for callers that already have boolean rows in `{ label, values }` format. When `series` is omitted, the component derives it internally from `labels` and `samples`. If the first label is `analogDataSeries`, that column is treated as the analog source column and skipped for boolean row rendering.
 
 ## Verification
 

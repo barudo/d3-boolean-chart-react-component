@@ -2,11 +2,6 @@ import React from "react";
 import BooleanTimelineChart from "./components/BooleanTimelineChart.jsx";
 import exampleData from "./example-data.json";
 
-const booleanSeries = exampleData.labels.slice(1).map((label, index) => ({
-  label,
-  values: exampleData.samples.map((sample) => Boolean(sample[index + 1])),
-}));
-
 function App() {
   return (
     <div style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
@@ -17,11 +12,11 @@ function App() {
         segments drawn on top.
       </p>
       <BooleanTimelineChart
-        series={booleanSeries}
-        startTime={exampleData.time.startTime}
-        sampleIntervalS={exampleData.time.sampleIntervalS}
+        labels={exampleData.labels}
+        samples={exampleData.samples}
+        time={exampleData.time}
         minSegmentWidth={20}
-        settings={{ plotColor: "#ff1a12", plotLineWidth: 8 }}
+        settings={{ plotColor: "#ff1a12", plotLineWidth: 3 }}
         width={980}
       />
       <p style={{ marginTop: 18, fontSize: 14, color: "#555" }}>

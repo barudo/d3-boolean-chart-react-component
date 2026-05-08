@@ -1,36 +1,61 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import * as d3 from "d3";
 
+const EMPTY_ARRAY = [];
+const DEFAULT_MARGIN = { top: 20, right: 20, bottom: 32, left: 140 };
+
 function BooleanTimelineChart({
-  series = [],
+  series = EMPTY_ARRAY,
+  labels = EMPTY_ARRAY,
+  samples = EMPTY_ARRAY,
+  time,
   startTime,
-  sampleIntervalS = 1,
+  sampleIntervalS,
   minSegmentWidth = 20,
   settings = {},
   width = 900,
-  margin = { top: 20, right: 20, bottom: 32, left: 140 },
+  margin = DEFAULT_MARGIN,
 }) {
   const svgRef = useRef(null);
   const plotColor = settings.plotColor || "#ff1a12";
   const plotLineWidth = settings.plotLineWidth || 8;
+  const chartSeries = useMemo(() => {
+    if (series.length) return series;
+    if (!labels.length || !samples.length) return [];
+
+    const booleanStartIndex = labels[0] === "analogDataSeries" ? 1 : 0;
+
+    return labels.slice(booleanStartIndex).map((label, index) => {
+      const sampleIndex = index + booleanStartIndex;
+
+      return {
+        label,
+        values: samples.map((sample) => Boolean(sample[sampleIndex])),
+      };
+    });
+  }, [series, labels, samples]);
+  const resolvedStartTime = startTime || time?.startTime;
+  const resolvedSampleIntervalS = sampleIntervalS ?? time?.sampleIntervalS ?? 1;
 
   useEffect(() => {
-    if (!series.length || !startTime) return;
+    if (!chartSeries.length || !resolvedStartTime) return;
 
     const svg = d3.select(svgRef.current);
     const innerWidth = width - margin.left - margin.right;
     const rowHeight = 36;
     const rowGap = 10;
-    const height = series.length * rowHeight + (series.length - 1) * rowGap;
-    const start = new Date(startTime);
-    const pointCount = series[0]?.values?.length || 0;
+    const height =
+      chartSeries.length * rowHeight + (chartSeries.length - 1) * rowGap;
+    const start = new Date(resolvedStartTime);
+    const pointCount = chartSeries[0]?.values?.length || 0;
     const sampleTimes = d3
       .range(pointCount)
       .map(
-        (index) => new Date(start.getTime() + index * sampleIntervalS * 1000),
+        (index) =>
+          new Date(start.getTime() + index * resolvedSampleIntervalS * 1000),
       );
     const endTime = new Date(
-      start.getTime() + pointCount * sampleIntervalS * 1000,
+      start.getTime() + pointCount * resolvedSampleIntervalS * 1000,
     );
 
     svg.attr("viewBox", [0, 0, width, height + margin.top + margin.bottom]);
@@ -59,14 +84,14 @@ function BooleanTimelineChart({
 
     const band = d3
       .scaleBand()
-      .domain(series.map((_, index) => index))
+      .domain(chartSeries.map((_, index) => index))
       .range([0, height])
       .paddingInner(0.3)
       .paddingOuter(0.1);
 
     const rowGroup = chartGroup.append("g");
 
-    series.forEach((serie, index) => {
+    chartSeries.forEach((serie, index) => {
       const y = band(index);
       if (y === undefined) return;
 
@@ -127,18 +152,19 @@ function BooleanTimelineChart({
         .attr("width", ([from, to]) => {
           const startX = xScale(sampleTimes[from]);
           const endX = xScale(
-            new Date(start.getTime() + (to + 1) * sampleIntervalS * 1000),
+            new Date(
+              start.getTime() + (to + 1) * resolvedSampleIntervalS * 1000,
+            ),
           );
           return Math.max(endX - startX, minSegmentWidth);
         })
         .attr("height", innerBarHeight)
-        .attr("fill", plotColor)
-        .attr("rx", 4);
+        .attr("fill", plotColor);
     });
   }, [
-    series,
-    startTime,
-    sampleIntervalS,
+    chartSeries,
+    resolvedStartTime,
+    resolvedSampleIntervalS,
     minSegmentWidth,
     plotColor,
     plotLineWidth,
