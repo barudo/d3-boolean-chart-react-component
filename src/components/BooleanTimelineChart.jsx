@@ -19,6 +19,7 @@ function BooleanTimelineChart({
   const svgRef = useRef(null);
   const plotColor = settings.plotColor || "#ff1a12";
   const plotLineWidth = settings.plotLineWidth || 8;
+  const resolvedMinSegmentWidth = minSegmentWidth > 0 ? minSegmentWidth : 20;
   const chartSeries = useMemo(() => {
     if (series.length) return series;
     if (!labels.length || !samples.length) return [];
@@ -156,7 +157,7 @@ function BooleanTimelineChart({
               start.getTime() + (to + 1) * resolvedSampleIntervalS * 1000,
             ),
           );
-          return Math.max(endX - startX, minSegmentWidth);
+          return Math.max(endX - startX, resolvedMinSegmentWidth);
         })
         .attr("height", innerBarHeight)
         .attr("fill", plotColor);
@@ -165,7 +166,7 @@ function BooleanTimelineChart({
     chartSeries,
     resolvedStartTime,
     resolvedSampleIntervalS,
-    minSegmentWidth,
+    resolvedMinSegmentWidth,
     plotColor,
     plotLineWidth,
     width,

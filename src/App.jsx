@@ -15,7 +15,7 @@ function App() {
         labels={exampleData.labels}
         samples={exampleData.samples}
         time={exampleData.time}
-        minSegmentWidth={20}
+        minSegmentWidth={70}
         settings={{ plotColor: "#ff1a12", plotLineWidth: 3 }}
         width={980}
       />
